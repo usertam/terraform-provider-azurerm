@@ -719,15 +719,8 @@ func resourceLinuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface
 		}
 	}
 
-	// "Authentication using either SSH or by user name and password must be enabled in Linux profile." Target="linuxConfiguration"
 	adminPassword := d.Get("admin_password").(string)
-	if disablePasswordAuthentication && len(sshKeys) == 0 {
-		return fmt.Errorf("at least one `admin_ssh_key` must be specified when `disable_password_authentication` is set to `true`")
-	} else if !disablePasswordAuthentication {
-		if adminPassword == "" {
-			return fmt.Errorf("an `admin_password` must be specified if `disable_password_authentication` is set to `false`")
-		}
-
+	if !disablePasswordAuthentication && adminPassword != "" {
 		params.OsProfile.AdminPassword = utils.String(adminPassword)
 	}
 
